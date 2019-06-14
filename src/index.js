@@ -5,7 +5,10 @@ import App from './App';
 import Comment from './componets/Comment.js';
 import Clock from './componets/Clock';
 import Toggle from './componets/Toggle';
+import LoginControl from './componets/LoginControl';
+import NumberList from './componets/NumberList';
 import * as serviceWorker from './serviceWorker';
+import Mailbox from './componets/Mailbox';
 
 // ReactDOM.render(<App />, document.getElementById('root'));
 const element = (
@@ -62,9 +65,18 @@ const comment = {
 };
 const elementComponet2 = <Comment date={comment.date} text={comment.text} author={comment.author} />
 
+const messages = ['React', 'Hello', 'Ni Hao', 'Win'];
+
+const numbers = [1, 2, 3, 4, 5, 9, 6];
+const listItems = numbers.map((number) =>
+    <li>{number}</li>
+);
+
 // ReactDOM.render(elementComponet2, document.getElementById('root'));
 // ReactDOM.render(<Clock />, document.getElementById('root'));
-ReactDOM.render(<Toggle />, document.getElementById('root'));
+// ReactDOM.render(<Mailbox  unreadMessages={messages}/>, document.getElementById('root'));
+// ReactDOM.render(listItems, document.getElementById('root'));
+ReactDOM.render(<NumberList numbers={numbers} />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
