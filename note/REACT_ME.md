@@ -399,3 +399,92 @@ const content = posts.map((post) =>
 );
 ```
 
+### 在 JSX 中嵌入 map()
+JSX 允许在大括号中嵌入任何表达式，所以我们可以内联 map() 返回的结果：
+```js
+function NumberList(props) {
+  const numbers = props.numbers;
+  return (
+    <ul>
+      {numbers.map((number) =>
+        <ListItem key={number.toString()}
+                  value={number} />
+
+      )}
+    </ul>
+  );
+}
+```
+
+## 表单
+### 受控组件
+
+#### selected
+请注意，由于 selected 属性的缘故，椰子选项默认被选中。React 并不会使用 selected 属性，而是在根 select 标签上使用 value 属性。这在受控组件中更便捷，因为您只需要在根标签中更新它。例如：
+```js
+class FlavorForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {value: 'coconut'};
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({value: event.target.value});
+  }
+
+  handleSubmit(event) {
+    alert('你喜欢的风味是: ' + this.state.value);
+    event.preventDefault();
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          选择你喜欢的风味:
+          <select value={this.state.value} onChange={this.handleChange}>
+            <option value="grapefruit">葡萄柚</option>
+            <option value="lime">酸橙</option>
+            <option value="coconut">椰子</option>
+            <option value="mango">芒果</option>
+          </select>
+        </label>
+        <input type="submit" value="提交" />
+      </form>
+    );
+  }
+}
+```
+
+**注意:**
+你可以将数组传递到 value 属性中，以支持在 select 标签中选择多个选项：
+```js
+<select multiple={true} value={['B', 'C']}>
+```
+
+#### 文件 input 标签
+在 HTML 中，
+```html
+<input type=“file”> 
+```
+允许用户从存储设备中选择一个或多个文件，将其上传到服务器
+因为它的 value 只读，所以它是 React 中的一个非受控组件。
+
+#### 处理多个输入
+当需要处理多个 input 元素时，我们可以给每个元素添加 name 属性，并让处理函数根据 event.target.name 的值选择要执行的操作。
+
+这里使用了 ES6 计算属性名称的语法更新给定输入名称对应的 state 值：
+例如：
+```js
+this.setState({
+  [name]: value
+});
+// 等同 ES5:
+var partialState = {};
+partialState[name] = value;
+this.setState(partialState);
+```
+
