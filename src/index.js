@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import Comment from './componets/Comment.js';
 import Clock from './componets/Clock';
+import Toggle from './componets/Toggle';
 import * as serviceWorker from './serviceWorker';
 
 // ReactDOM.render(<App />, document.getElementById('root'));
@@ -62,7 +63,8 @@ const comment = {
 const elementComponet2 = <Comment date={comment.date} text={comment.text} author={comment.author} />
 
 // ReactDOM.render(elementComponet2, document.getElementById('root'));
-ReactDOM.render(<Clock />, document.getElementById('root'));
+// ReactDOM.render(<Clock />, document.getElementById('root'));
+ReactDOM.render(<Toggle />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
