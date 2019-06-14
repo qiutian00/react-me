@@ -10,6 +10,7 @@ import NumberList from './componets/NumberList';
 import NumberList2 from './componets/NumberList2';
 import * as serviceWorker from './serviceWorker';
 import Mailbox from './componets/Mailbox';
+import Calculator from './componets/Calculator';
 
 // ReactDOM.render(<App />, document.getElementById('root'));
 const element = (
@@ -77,7 +78,8 @@ const listItems = numbers.map((number) =>
 // ReactDOM.render(<Clock />, document.getElementById('root'));
 // ReactDOM.render(<Mailbox  unreadMessages={messages}/>, document.getElementById('root'));
 // ReactDOM.render(listItems, document.getElementById('root'));
-ReactDOM.render(<NumberList2 numbers={numbers} />, document.getElementById('root'));
+// ReactDOM.render(<NumberList2 numbers={numbers} />, document.getElementById('root'));
+ReactDOM.render(<Calculator />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

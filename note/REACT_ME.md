@@ -488,3 +488,26 @@ partialState[name] = value;
 this.setState(partialState);
 ```
 
+### 受控输入空值
+下面的代码演示了这一点。（输入最初被锁定，但在短时间延迟后变为可编辑。）
+```js
+ReactDOM.render(<input value="hi" />, mountNode);
+
+setTimeout(function() {
+  ReactDOM.render(<input value={null} />, mountNode);
+},
+```
+
+#### 成熟的解决方案
+如果你想寻找包含验证、追踪访问字段以及处理表单提交的完整解决方案，使用 [Formik](https://jaredpalmer.com/formik/docs/overview) 是不错的选择。然而，它也是建立在受控组件和管理 state 的基础之上 —— 所以不要忽视学习它们。
+
+
+## 状态提升
+通常，多个组件需要反映相同的变化数据，这时我们建议将共享状态提升到最近的共同父组件中去。让我们看看它是如何运作的。
+
+
+
+##  组合 vs 继承
+
+##  React 哲学
+
