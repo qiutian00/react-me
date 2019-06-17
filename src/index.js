@@ -17,6 +17,7 @@ import Chat from './componets/Chat';
 import SignUpDialog from './componets/SignUpDialog';
 import AppRouter from './router/AppRouter';
 import AppRouter2 from './router/AppRouter2';
+import BasicExample from './router/BasicExample';
 
 // ReactDOM.render(<App />, document.getElementById('root'));
 const element = (
@@ -88,7 +89,7 @@ const listItems = numbers.map((number) =>
 // ReactDOM.render(<Calculator />, document.getElementById('root'));
 // ReactDOM.render(<SplitPane left={<Contacts/>} right={<Chat/>} />, document.getElementById('root'));
 // ReactDOM.render(<SignUpDialog title='Earth Exploration Program' message='please login in ... ' />, document.getElementById('root'));// If you want your app to work offline and load faster, you can change
-ReactDOM.render(<AppRouter2 />, document.getElementById('root'));// If you want your app to work offline and load faster, you can change
+ReactDOM.render(<BasicExample />, document.getElementById('root'));// If you want your app to work offline and load faster, you can change
 
 
 // unregister() to register() below. Note this comes with some pitfalls.

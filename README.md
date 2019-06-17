@@ -9,6 +9,6 @@ first learning react project for me
 
 [**工具**](https://zh-hans.reactjs.org/community/support.html)
 >* [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react)
->* [react router](https://reacttraining.com/react-router/web/guides/quick-start)
 >* [Delightful JavaScript testing used by Facebook](https://jestjs.io/)
->* [react router zh-guide](http://react-guide.github.io/react-router-cn/docs/Introduction.html)
+>* [react router](https://reacttraining.com/react-router/web/guides/quick-start)
+>* [redux-in-chinese](https://github.com/camsong/redux-in-chinese)
