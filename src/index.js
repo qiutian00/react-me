@@ -14,6 +14,7 @@ import Calculator from './componets/Calculator';
 import SplitPane from './componets/SplitPane';
 import Contacts from './componets/Contacts';
 import Chat from './componets/Chat';
+import SignUpDialog from './componets/SignUpDialog';
 
 // ReactDOM.render(<App />, document.getElementById('root'));
 const element = (
@@ -83,9 +84,10 @@ const listItems = numbers.map((number) =>
 // ReactDOM.render(listItems, document.getElementById('root'));
 // ReactDOM.render(<NumberList2 numbers={numbers} />, document.getElementById('root'));
 // ReactDOM.render(<Calculator />, document.getElementById('root'));
-ReactDOM.render(<SplitPane left={<Contacts/>} right={<Chat/>} />, document.getElementById('root'));
+// ReactDOM.render(<SplitPane left={<Contacts/>} right={<Chat/>} />, document.getElementById('root'));
+ReactDOM.render(<SignUpDialog title='Earth Exploration Program' message='please login in ... ' />, document.getElementById('root'));// If you want your app to work offline and load faster, you can change
 
-// If you want your app to work offline and load faster, you can change
+
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
