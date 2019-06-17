@@ -1,5 +1,6 @@
 import React from 'react';
-import styles from './SplitPane.less';
+// import './SplitPane.less';
+
 
 class SplitPane extends React.Component {
     constructor(props) {
@@ -8,11 +9,11 @@ class SplitPane extends React.Component {
 
     render() {
         return (
-            <div className={styles.SplitPane}>
-                <div className={styles.half}>
+            <div className='splitPane'>
+                <div className='half'>
                     {this.props.left}
                 </div>
-                <div className={styles.half}>
+                <div className='half'>
                     {this.props.right}
                 </div>
             </div>
