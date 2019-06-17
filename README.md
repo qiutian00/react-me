@@ -11,4 +11,4 @@ first learning react project for me
 >* [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react)
 >* [react router](https://reacttraining.com/react-router/web/guides/quick-start)
 >* [Delightful JavaScript testing used by Facebook](https://jestjs.io/)
->* [react 中文guide](http://react-guide.github.io/react-router-cn/docs/Introduction.html)
+>* [react router zh-guide](http://react-guide.github.io/react-router-cn/docs/Introduction.html)
