@@ -90,8 +90,9 @@ const listItems = numbers.map((number) =>
 // ReactDOM.render(<Calculator />, document.getElementById('root'));
 // ReactDOM.render(<SplitPane left={<Contacts/>} right={<Chat/>} />, document.getElementById('root'));
 // ReactDOM.render(<SignUpDialog title='Earth Exploration Program' message='please login in ... ' />, document.getElementById('root'));// If you want your app to work offline and load faster, you can change
-ReactDOM.render(<ParamsExample />, document.getElementById('root'));// If you want your app to work offline and load faster, you can change
+// ReactDOM.render(<ParamsExample />, document.getElementById('root'));// If you want your app to work offline and load faster, you can change
 
+ReactDOM.render(<App />, document.getElementById('root'));// If you want your app to work offline and load faster, you can change
 
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
