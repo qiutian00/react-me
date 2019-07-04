@@ -609,6 +609,7 @@ Props 和组合为你提供了清晰而安全地定制组件外观和行为的�
 # react-naive-book-examples
 
 ## 第二阶段
+
 ### 状态提升
 在我们的例子当中，如果把 comments 交给父组件 CommentApp ，那么 CommentList 和 CommentList2 都可以通过 props 获取到 comments，React.js 把这种行为叫做“状态提升”。
 
@@ -781,7 +782,7 @@ let newAppState1 = { // 新建一个 newAppState1
 }
 ```
 
-###优化性能
+### 优化性能
 我们修改 stateChanger，让它修改数据的时候，并不会直接修改原来的数据 state，而是产生上述的共享结构的对象：
 ```js
 function stateChanger (state, action) {
