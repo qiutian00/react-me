@@ -604,3 +604,291 @@ Props 和组合为你提供了清晰而安全地定制组件外观和行为的�
 # API RENFERENCE
 
 ...
+
+
+# react-naive-book-examples
+
+## 第二阶段
+### 状态提升
+在我们的例子当中，如果把 comments 交给父组件 CommentApp ，那么 CommentList 和 CommentList2 都可以通过 props 获取到 comments，React.js 把这种行为叫做“状态提升”。
+
+但是这个 CommentList2 是我们临时加上去的，在实际案例当中并没有涉及到这种组件之间依赖 comments 的情况，为什么还需要把 comments 提升到 CommentApp？那是因为有个组件会影响到 comments ，那就是 CommentInput。CommentInput 产生的新的评论数据是会插入 comments 当中的，所以我们遇到这种情况也会把状态提升到父组件。
+
+总结一下：当某个状态被多个组件依赖或者影响的时候，就把该状态提升到这些组件的最近公共父组件中去管理，用 props 传递数据或者函数来管理这种依赖或着影响的行为。
+
+对于不会被多个组件依赖和影响的状态（例如某种下拉菜单的展开和收起状态），一般来说只需要保存在组件内部即可，不需要做提升或者特殊的管理。
+
+渲染的时候可以把新的 props 传递给子组件，从而达到页面更新的效果。
+
+### ref 和 React.js 中的 DOM 操作
+
+React.js 当中提供了 ref 属性来帮助我们获取已经挂载的元素的 DOM 节点，你可以给某个 JSX 元素加上 ref属性：
+```js
+class AutoFocusInput extends Component {
+  componentDidMount () {
+    this.input.focus()
+  }
+
+  render () {
+    return (
+      <input ref={(input) => this.input = input} />
+    )
+  }
+}
+
+ReactDOM.render(
+  <AutoFocusInput />,
+  document.getElementById('root')
+)
+```
+
+可以看到我们给 input 元素加了一个 ref 属性，这个属性值是一个函数。当 input 元素在页面上挂载完成以后，React.js 就会调用这个函数，并且把这个挂载以后的 DOM 节点传给这个函数。在函数中我们把这个 DOM 元素设置为组件实例的一个属性，这样以后我们就可以通过 this.input 获取到这个 DOM 元素。
+
+然后我们就可以在 componentDidMount 中使用这个 DOM 元素，并且调用 this.input.focus() 的 DOM API。整体就达到了页面加载完成就自动 focus 到输入框的功能
+
+但是记住一个原则：能不用 ref 就不用。特别是要避免用 ref 来做 React.js 本来就可以帮助你做到的页面自动更新的操作和事件监听。多余的 DOM 操作其实是代码里面的“噪音”，不利于我们理解和维护。
+
+other:
+用对象作为 style 方便我们动态设置元素的样式。我们可以用 props 或者 state 中的数据生成样式对象再传给元素，然后用 setState 就可以修改样式，非常灵活：
+```js 
+<h1 style={{fontSize: '12px', color: this.state.color}}>React.js 小书</h1>
+```
+
+### PropTypes 和组件参数验证
+ React.js 就提供了一种机制，让你可以给组件的配置参数加上类型验证，就用上述的评论组件例子，你可以配置 Comment 只能接受对象类型的 comment 参数，你传个数字进来组件就强制报错。我们这里先安装一个 React 提供的第三方库 prop-types：
+
+ 它可以帮助我们验证 props 的参数类型，例如：
+
+ ```js
+ import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+
+class Comment extends Component {
+  static propTypes = {
+    comment: PropTypes.object
+  }
+
+  render () {
+    const { comment } = this.props
+    return (
+      <div className='comment'>
+        <div className='comment-user'>
+          <span>{comment.username} </span>：
+        </div>
+        <p>{comment.content}</p>
+      </div>
+    )
+  }
+}
+```
+这时候如果再往里面传入数字，浏览器就会报错：
+
+出错信息明确告诉我们：你给 Comment 组件传了一个数字类型的 comment，而它应该是 object。你就清晰知道问题出在哪里了。
+
+虽然 propTypes 帮我们指定了参数类型，但是并没有说这个参数一定要传入，事实上，这些参数默认都是可选的。可选参数我们可以通过配置 defaultProps，让它在不传入的时候有默认值。但是我们这里并没有配置 defaultProps，所以如果直接用 <Comment /> 而不传入任何参数的话，comment 就会是 undefined，
+
+虽然 propTypes 帮我们指定了参数类型，但是并没有说这个参数一定要传入，事实上，这些参数默认都是可选的。可选参数我们可以通过配置 defaultProps，让它在不传入的时候有默认值。但是我们这里并没有配置 defaultProps，所以如果直接用 <Comment /> 而不传入任何参数的话，comment 就会是 undefined，
+
+React.js 提供的 PropTypes 提供了一系列的数据类型可以用来配置组件的参数：
+
+```js
+PropTypes.array
+PropTypes.bool
+PropTypes.func
+PropTypes.number
+PropTypes.object
+PropTypes.string
+PropTypes.node
+PropTypes.element
+```
+更多类型及其用法可以参看官方文档： Typechecking With PropTypes - React。
+
+other:
+这里插入一些小贴示，大家可以注意到我们组件的命名和方法的摆放顺序其实有一定的讲究，这里可以简单分享一下个人的习惯，仅供参考。
+
+组件的私有方法都用 _ 开头，所有事件监听的方法都用 handle 开头。把事件监听方法传给组件的时候，属性名用 on 开头。例如：
+```js
+<CommentInput onSubmit={this.handleSubmitComment.bind(this)} />
+```
+
+### redux 介绍
+组建的编写顺序的
+	static 开头的类属性，如 defaultProps、propTypes。
+	构造函数，constructor。
+	getter/setter（还不了解的同学可以暂时忽略）。
+	组件生命周期。
+	_ 开头的私有方法。
+	事件监听方法，handle*。
+	render*开头的方法，有时候 render() 方法里面的内容会分开到不同函数里面进行，这些函数都以 render* 开头。
+	render() 方法。
+	
+props 可以下发所有的东西的： 给子组件的
+
+我们可以学习 React.js 团队的做法，把事情搞复杂一些，提高数据修改的门槛：模块（组件）之间可以共享数据，也可以改数据。但是我们约定，这个数据并不能直接改，你只能执行某些我允许的某些修改，而且你修改的必须大张旗鼓地告诉我。
+
+构建一个函数 createStore，用来专门生产这种 state 和 dispatch 的集合，这样别的 App 也可以用这种模式了：
+```js
+function createStore (state, stateChanger) {
+  const getState = () => state
+  const dispatch = (action) => stateChanger(state, action)
+  return { getState, dispatch }
+}
+```
+
+createStore 会返回一个对象，这个对象包含两个方法 getState 和 dispatch。getState 用于获取 state 数据，其实就是简单地把 state 参数返回。
+
+
+观察者模式。修改 createStore：
+```js
+function createStore (state, stateChanger) {
+  const listeners = []
+  const subscribe = (listener) => listeners.push(listener)
+  const getState = () => state
+  const dispatch = (action) => {
+    stateChanger(state, action)
+    listeners.forEach((listener) => listener())
+  }
+  return { getState, dispatch, subscribe }
+}
+```
+
+我们在 createStore 里面定义了一个数组 listeners，
+还有一个新的方法 subscribe，可以通过 store.subscribe(listener) 的方式给 subscribe 传入一个监听函数，这个函数会被 push 到数组当中。
+
+我们修改了 dispatch，每次当它被调用的时候，除了会调用 stateChanger 进行数据的修改，还会遍历 listeners 数组里面的函数，然后一个个地去调用。相当于我们可以通过 subscribe 传入数据变化的监听函数，每当 dispatch 的时候，监听函数就会被调用，这样我们就可以在每当数据变化时候进行重新渲染：
+
+一个函数的返回结果只依赖于它的参数，并且在执行过程里面没有副作用，我们就把这个函数叫做 **纯函数**
+
+### 共享结构的对象
+```js
+const obj = { a: 1, b: 2}
+const obj2 = { ...obj } // => { a: 1, b: 2 }
+```
+
+const obj2 = { ...obj } 其实就是新建一个对象 obj2，然后把 obj 所有的属性都复制到 obj2 里面，相当于对象的浅复制。上面的 obj 里面的内容和 obj2 是完全一样的，但是却是两个不同的对象。除了浅复制对象，还可以覆盖、拓展对象属性：
+```js
+const obj = { a: 1, b: 2}
+const obj2 = { ...obj, b: 3, c: 4} // => { a: 1, b: 3, c: 4 }，覆盖了 b，新增了 c
+```
+
+```js
+let newAppState1 = { // 新建一个 newAppState1
+  ...newAppState, // 复制 newAppState1 里面的内容
+  title: { // 用一个新的对象覆盖原来的 title 属性
+    ...newAppState.title, // 复制原来 title 对象里面的内容
+    color: "blue" // 覆盖 color 属性
+  }
+}
+```
+
+###优化性能
+我们修改 stateChanger，让它修改数据的时候，并不会直接修改原来的数据 state，而是产生上述的共享结构的对象：
+```js
+function stateChanger (state, action) {
+  switch (action.type) {
+    case 'UPDATE_TITLE_TEXT':
+      return { // 构建新的对象并且返回
+        ...state,
+        title: {
+          ...state.title,
+          text: action.text
+        }
+      }
+    case 'UPDATE_TITLE_COLOR':
+      return { // 构建新的对象并且返回
+        ...state,
+        title: {
+          ...state.title,
+          color: action.color
+        }
+      }
+    default:
+      return state // 没有修改，返回原来的对象
+  }
+}
+```
+```js
+const store = createStore(appState, stateChanger)
+let oldState = store.getState() // 缓存旧的 state
+store.subscribe(() => {
+  const newState = store.getState() // 数据可能变化，获取新的 state
+  if (newState === oldState) return
+  renderApp(newState, oldState) // 把新旧的 state 传进去渲染
+  oldState = newState // 渲染完以后，新的 newState 变成了旧的 oldState，等待下一次数据变化重新渲染
+})
+
+// 并且补充下面代码
+
+function createStore (state, stateChanger) {
+  const listeners = []
+  const subscribe = (listener) => listeners.push(listener)
+  const getState = () => state
+  const dispatch = (action) => {
+    state = stateChanger(state, action) // 覆盖原对象,这个是比上次多的
+    listeners.forEach((listener) => listener())
+  }
+  return { getState, dispatch, subscribe }
+}
+```
+
+
+### 简化
+```js
+function createStore (stateChanger) {
+  let state = null
+  const listeners = []
+  const subscribe = (listener) => listeners.push(listener)
+  const getState = () => state
+  const dispatch = (action) => {
+    state = stateChanger(state, action)
+    listeners.forEach((listener) => listener())
+  }
+  dispatch({}) // 初始化 state
+  return { getState, dispatch, subscribe }
+}
+```
+createStore 内部的 state 不再通过参数传入，而是一个局部变量 let state = null。createStore 的最后会手动调用一次 dispatch({})，dispatch 内部会调用 stateChanger，这时候的 state 是 null，所以这次的 dispatch 其实就是初始化数据了。createStore 内部第一次的 dispatch 导致 state 初始化完成，后续外部的 dispatch 就是修改数据的行为了。
+
+我们给 stateChanger 这个玩意起一个通用的名字：reducer，不要问为什么，它就是个名字而已，修改 createStore 的参数名字
+reducer 是一个函数，细心的朋友会发现，它其实是一个纯函数（Pure Function）
+```js
+function createStore (reducer) {
+  let state = null
+  const listeners = []
+  const subscribe = (listener) => listeners.push(listener)
+  const getState = () => state
+  const dispatch = (action) => {
+    state = reducer(state, action)
+    listeners.forEach((listener) => listener())
+  }
+  dispatch({}) // 初始化 state
+  return { getState, dispatch, subscribe }
+}
+```
+reducer 是不允许有副作用的。你不能在里面操作 DOM，也不能发 Ajax 请求，更不能直接修改 state，它要做的仅仅是 —— 初始化和计算新的 state。
+
+###  Redux 和 React.js 结合
+回顾一下，我们在 前端应用状态管理 —— 状态提升 中提过，前端中应用的状态存在的问题：一个状态可能被多个组件依赖或者影响，而 React.js 并没有提供好的解决方案，我们只能把状态提升到依赖或者影响这个状态的所有组件的公共父组件上，我们把这种行为叫做状态提升。但是需求不停变化，共享状态没完没了地提升也不是办法。
+
+后来我们在 React.js 的 context 中提出，我们可用把共享状态放到父组件的 context 上，这个父组件下所有的组件都可以从 context 中直接获取到状态而不需要一层层地进行传递了。但是直接从 context 里面存放、获取数据增强了组件的耦合性；并且所有组件都可以修改 context 里面的状态就像谁都可以修改共享状态一样，导致程序运行的不可预料。
+
+既然这样，为什么不把 context 和 store 结合起来？毕竟 store 的数据不是谁都能修改，而是约定只能通过 dispatch 来进行修改，这样的话每个组件既可以去 context 里面获取 store 从而获取状态，又不用担心它们乱改数据了。
+
+### 所以我们尽量多地写 Dumb 组件，然后用高阶组件把它们包装一层，高阶组件和 context 打交道，把里面数据取出来通过 props 传给 Dumb 组件。
+```js
+const mapStateToProps = (state) => {
+  return {
+    themeColor: state.themeColor
+  }
+}
+Header = connect(mapStateToProps)(Header)
+```
+connect 现在是接受一个参数 mapStateToProps，然后返回一个函数，这个返回的函数才是高阶组件。它会接受一个组件作为参数，然后用 Connect 把组件包装以后再返回。 connect 的用法是：
+
+Dumb 组件最好不要依赖除了 React.js 和 Dumb 组件以外的内容。它们不要依赖 Redux 不要依赖 React-redux。这样的组件的可复用性是最好的，其他人可以安心地使用而不用怕会引入什么奇奇怪怪的东西。
+
+当我们拿到一个需求开始划分组件的时候，要认真考虑每个被划分成组件的单元到底会不会被复用。如果这个组件可能会在多处被使用到，那么我们就把它做成 Dumb 组件。
+
+### 总结： connect（高阶组件）和 context 打交道，把里面数据取出来通过 props 传给 Dumb （普通）组件。
+
+

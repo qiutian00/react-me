@@ -13,3 +13,4 @@ first learning react project for me
 >* [react router](https://reacttraining.com/react-router/web/guides/quick-start)
 >* [redux-in-chinese](https://github.com/camsong/redux-in-chinese)
 >* [https://github.com/digitarald/debugger-html-create-react-app](https://github.com/digitarald/debugger-html-create-react-app)
+>* [react online book](http://huziketang.mangojuice.top/books/react/)
