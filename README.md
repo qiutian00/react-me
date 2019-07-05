@@ -14,3 +14,5 @@ first learning react project for me
 >* [redux-in-chinese](https://github.com/camsong/redux-in-chinese)
 >* [https://github.com/digitarald/debugger-html-create-react-app](https://github.com/digitarald/debugger-html-create-react-app)
 >* [react online book](http://huziketang.mangojuice.top/books/react/)
+>* [redux-in-chinese](https://github.com/camsong/redux-in-chinese)
+>* [jest for create react app or without react app](https://jestjs.io/docs/en/tutorial-react)

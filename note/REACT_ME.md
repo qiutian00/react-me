@@ -893,3 +893,19 @@ Dumb 组件最好不要依赖除了 React.js 和 Dumb 组件以外的内容。�
 ### 总结： connect（高阶组件）和 context 打交道，把里面数据取出来通过 props 传给 Dumb （普通）组件。
 
 
+# redux-in-chinese
+
+## 使用范围
+在下面的场景中，引入 Redux 是比较明智的：
+>* 你有着相当大量的、随时间变化的数据
+>* 你的 state 需要有一个单一可靠数据来源
+>* 你觉得把所有 state 放在最顶层组件中已经无法满足需要了
+
+## 基础
+
+
+## 进阶概念
+
+Building a Simple CRUD App with React + Redux 
+
+
