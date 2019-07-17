@@ -16,3 +16,11 @@ first learning react project for me
 >* [react online book](http://huziketang.mangojuice.top/books/react/)
 >* [redux-in-chinese](https://github.com/camsong/redux-in-chinese)
 >* [jest for create react app or without react app](https://jestjs.io/docs/en/tutorial-react)
+
+**other**(keep in the computer 中)
+>* [再次理解react-redux](https://segmentfault.com/a/1190000010416732?utm_source=tag-newest)
+>* [JavaScript Decorators 的简单理解](https://www.cnblogs.com/SamWeb/p/8387795.html)
+
+**dav**
+>* 由来： [支付宝前端应用架构的发展和选择](https://github.com/sorrycc/blog/issues/6) [
+React + Redux 最佳实践](https://github.com/sorrycc/blog/issues/1)
