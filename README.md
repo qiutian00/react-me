@@ -4,7 +4,7 @@ first learning react project for me
 
 **quick-start source**
 >* [react 官方文档](https://zh-hans.reactjs.org/docs/)
->* [学习记录](me/note/REACT_ME.md)
+>* [学习记录](me/note/react_me.md)
 >* [react practice project](https://github.com/shuiRong/ReactCnodeJS)
 
 [**工具**](https://zh-hans.reactjs.org/community/support.html)
