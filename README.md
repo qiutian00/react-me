@@ -26,4 +26,4 @@ first learning react project for me
 >* 由来： [支付宝前端应用架构的发展和选择](https://github.com/sorrycc/blog/issues/6) [
 React + Redux 最佳实践](https://github.com/sorrycc/blog/issues/1)
 
-**可以关注我的[github](https://github.com/qiutian00?tab=repositories),Star me**
+可以关注我的[github](https://github.com/qiutian00?tab=repositories),Star me
