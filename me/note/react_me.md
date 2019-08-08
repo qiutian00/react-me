@@ -610,9 +610,241 @@ Props 和组合为你提供了清晰而安全地定制组件外观和行为的�
 >* 用户输入的搜索词
 >* 复选框是否选中的值
 
+# 高级指引
+
+## 代码分割
+### import()
+在你的应用中引入代码分割的最佳方式是通过动态 import() 语法。
+
+使用之前：
+```js
+import { add } from './math';
+
+console.log(add(16, 26));
+```
+使用之后：
+```js
+import("./math").then(math => {
+  console.log(math.add(16, 26));
+});
+```
+
+### 基于路由的代码分割
+```js
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import React, { Suspense, lazy } from 'react';
+
+const Home = lazy(() => import('./routes/Home'));
+const About = lazy(() => import('./routes/About'));
+
+const App = () => (
+  <Router>
+    <Suspense fallback={<div>Loading...</div>}>
+      <Switch>
+        <Route exact path="/" component={Home}/>
+        <Route path="/about" component={About}/>
+      </Switch>
+    </Suspense>
+  </Router>
+);
+```
+
+### 命名导出（Named Exports）
+React.lazy 目前只支持默认导出（default exports）。如果你想被引入的模块使用命名导出（named exports），你可以创建一个中间模块，来重新导出为默认模块。这能保证 tree shaking 不会出错，并且不必引入不需要的组件。
+
+```js
+// ManyComponents.js
+export const MyComponent = /* ... */;
+export const MyUnusedComponent = /* ... */;
+// MyComponent.js
+export { MyComponent as default } from "./ManyComponents.js";
+// MyApp.js
+import React, { lazy } from 'react';
+const MyComponent = lazy(() => import("./MyComponent.js"));
+```
+
+## Context
+### 错误边界（Error Boundaries）
+错误边界无法捕获以下场景中产生的错误：
+
+> * 事件处理（了解更多）
+> * 异步代码（例如 setTimeout 或 requestAnimationFrame 回调函数）
+> * 服务端渲染
+> * 它自身抛出来的错误（并非它的子组件）
+
+如果一个 class 组件中定义了 static getDerivedStateFromError() 或 componentDidCatch() 这两个生命周期方法中的任意一个（或两个）时，那么它就变成一个错误边界。当抛出错误后，请使用 static getDerivedStateFromError() 渲染备用 UI ，使用 componentDidCatch() 打印错误信息。
+
+```js
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    // 更新 state 使下一次渲染能够显示降级后的 UI
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, info) {
+    // 你同样可以将错误日志上报给服务器
+    logErrorToMyService(error, info);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // 你可以自定义降级后的 UI 并渲染
+      return <h1>Something went wrong.</h1>;
+    }
+
+    return this.props.children; 
+  }
+}
+```
+
+错误边界的工作方式类似于 JavaScript 的 catch {}，不同的地方在于错误边界只针对 React 组件。只有 class 组件才可以成为成错误边界组件。大多数情况下, 你只需要声明一次错误边界组件, 并在整个应用中使用它。
+
+注意**错误边界仅可以捕获其子组件的错误**，它无法捕获其自身的错误。如果一个错误边界无法渲染错误信息，则错误会冒泡至最近的上层错误边界，这也类似于 JavaScript 中 catch {} 的工作机制。
+
+### 未捕获错误（Uncaught Errors）的新行为
+
+这一改变具有重要意义，**自 React 16 起，任何未被错误边界捕获的错误将会导致整个 React 组件树被卸载。**
+
+我们对这一决定有过一些争论，但根据我们的经验，把一个错误的 UI 留在那比完全移除它要更糟糕。例如，在类似 Messenger 的产品中，把一个异常的 UI 展示给用户可能会导致用户将信息错发给别人。同样，对于支付类应用而言，显示错误的金额也比不呈现任何内容更糟糕。
+
+### 组件栈追踪
+你也可以在组件栈追踪中查看文件名和行号，这一功能在 Create React App 项目中默认开启：
+
+Error caught by Error Boundary component with line numbers
+如果你没有使用 Create React App，可以手动将该插件添加到你的 Babel 配置中。注意它仅用于开发环境，**在生产环境必须将其禁用 **。
+
+### 关于 try/catch ？
+try / catch 很棒但它仅能用于命令式代码（imperative code）：
+
+```js
+try {
+  showButton();
+} catch (error) {
+  // ...
+}
+```
+然而，React 组件是声明式的并且具体指出 什么 需要被渲染：
+```js
+<Button />
+```
+错误边界保留了 React 的声明性质，其行为符合你的预期。例如，即使一个错误发生在 componentDidUpdate 方法中，并且由某一个深层组件树的 setState 引起，其仍然能够冒泡到最近的错误边界。
+
+### 关于事件处理器
+
+错误边界无法捕获事件处理器内部的错误。
+
+React 不需要错误边界来捕获事件处理器中的错误。与 render 方法和生命周期方法不同，事件处理器不会在渲染期间触发。因此，如果它们抛出异常，React 仍然能够知道需要在屏幕上显示什么。
+
+如果你需要在事件处理器内部捕获错误，使用普通的 JavaScript try / catch 语句：
+
+```js
+class MyComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null };
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    try {
+      // 执行操作，如有错误则会抛出
+    } catch (error) {
+      this.setState({ error });
+    }
+  }
+
+  render() {
+    if (this.state.error) {
+      return <h1>Caught an error.</h1>
+    }
+    return <div onClick={this.handleClick}>Click Me</div>
+  }
+}
+```
+
+## 转发 refs 到 DOM 组件
+
+**Ref 转发是一个可选特性，其允许某些组件接收 ref，并将其向下传递（换句话说，“转发”它）给子组件。**
+
+在下面的示例中，FancyButton 使用 React.forwardRef 来获取传递给它的 ref，然后转发到它渲染的 DOM button：
+
+```js
+const FancyButton = React.forwardRef((props, ref) => (
+  <button ref={ref} className="FancyButton">
+    {props.children}
+  </button>
+));
+
+// 你可以直接获取 DOM button 的 ref：
+const ref = React.createRef();
+<FancyButton ref={ref}>Click me!</FancyButton>;
+```
+
+这样，使用 FancyButton 的组件可以获取底层 DOM 节点 button 的 ref ，并在必要时访问，就像其直接使用 DOM button 一样。
+
+以下是对上述示例发生情况的逐步解释：
+
+> *  我们通过调用 React.createRef 创建了一个 React ref 并将其赋值给 ref 变量。
+> *  我们通过指定 ref 为 JSX 属性，将其向下传递给 <FancyButton ref={ref}>。
+> *  React 传递 ref 给 fowardRef 内函数 (props, ref) => ...，作为其第二个参数。
+> *  我们向下转发该 ref 参数到 <button ref={ref}>，将其指定为 JSX 属性。
+> * 当 ref 挂载完成，ref.current 将指向 <button> DOM 节点。
+
+注意:
+第二个参数 ref 只在使用 React.forwardRef 定义组件时存在。常规函数和 class 组件不接收 ref 参数，且 props 中也不存在 ref。
+Ref 转发不仅限于 DOM 组件，你也可以转发 refs 到 class 组件实例中。
+
+## Fragments
+React 中的一个常见模式是一个组件返回多个元素。Fragments 允许你将子列表分组，而无需向 DOM 添加额外节点。
+
+```js
+class Columns extends React.Component {
+  render() {
+    return (
+      <React.Fragment>
+        <td>Hello</td>
+        <td>World</td>
+      </React.Fragment>
+    );
+  }
+}
+```
+### 带 key 的 Fragments
+使用显式 <React.Fragment> 语法声明的片段可能具有 key。一个使用场景是将一个集合映射到一个 Fragments 数组 - 举个例子，创建一个描述列表：
+```js
+function Glossary(props) {
+  return (
+    <dl>
+      {props.items.map(item => (
+        // 没有`key`，React 会发出一个关键警告
+        <React.Fragment key={item.id}>
+          <dt>{item.term}</dt>
+          <dd>{item.description}</dd>
+        </React.Fragment>
+      ))}
+    </dl>
+  );
+}
+```
+key 是唯一可以传递给 Fragment 的属性。未来我们可能会添加对其他属性的支持，例如事件。
+### 高阶组件
+
+
 # API RENFERENCE
 
-...
+# HOOK (new)
+
+## Hook introduction
+**Hook 使你在非 class 的情况下可以使用更多的 React 特性。** 从概念上讲，React 组件一直更像是函数。而 Hook 则拥抱了函数，同时也没有牺牲 React 的精神原则。Hook 提供了问题的解决方案，无需学习复杂的函数式或响应式编程技术。
+
+# FQA
+
+................
 
 
 # react-naive-book-examples
