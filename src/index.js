@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+// 错误日志监控
+import * as Sentry from '@sentry/browser';
 import './index.css';
 import App from './App';
 import Comment from './componets/Comment.js';
@@ -19,6 +21,7 @@ import AppRouter from './router/AppRouter';
 import AppRouter2 from './router/AppRouter2';
 import BasicExample from './router/BasicExample';
 import ParamsExample from './router/ParamsExample';
+import ExampleBoundary from './componets/ExampleBoundary';
 
 // ReactDOM.render(<App />, document.getElementById('root'));
 const element = (
@@ -92,7 +95,8 @@ const listItems = numbers.map((number) =>
 // ReactDOM.render(<SignUpDialog title='Earth Exploration Program' message='please login in ... ' />, document.getElementById('root'));// If you want your app to work offline and load faster, you can change
 // ReactDOM.render(<ParamsExample />, document.getElementById('root'));// If you want your app to work offline and load faster, you can change
 
-ReactDOM.render(<App />, document.getElementById('root'));// If you want your app to work offline and load faster, you can change
+Sentry.init({dsn: "https://5f1415cc537d4beca1d215ee17059d9c@sentry.io/1536697"});
+ReactDOM.render(<ExampleBoundary />, document.getElementById('root'));// If you want your app to work offline and load faster, you can change
 
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
